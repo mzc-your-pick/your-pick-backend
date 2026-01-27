@@ -1,4 +1,7 @@
+from .program import Program
+from .topic import Topic
 from .vote import Vote
-from .poll import Poll
+from .participant_image import ParticipantImage
+from .comment import Comment
 
-__all__ = ["Vote", "Poll"]
+__all__ = ["Program", "Topic", "Vote", "ParticipantImage", "Comment"]
