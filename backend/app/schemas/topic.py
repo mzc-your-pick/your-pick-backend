@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from datetime import datetime
 from typing import Optional, List
 
@@ -49,15 +49,12 @@ class TopicResponse(BaseModel):
     class Config:
         from_attributes = True
 
+    @field_validator('participants', mode='before')
     @classmethod
-    def model_validate(cls, obj, **kwargs):
-        if hasattr(obj, 'participants') and isinstance(obj.participants, str):
-            obj_dict = {c.name: getattr(obj, c.name) for c in obj.__table__.columns}
-            obj_dict['participants'] = [p.strip() for p in obj.participants.split(',') if p.strip()]
-            if hasattr(obj, 'participant_images'):
-                obj_dict['participant_images'] = obj.participant_images
-            return super().model_validate(obj_dict, **kwargs)
-        return super().model_validate(obj, **kwargs)
+    def split_participants(cls, v):
+        if isinstance(v, str):
+            return [p.strip() for p in v.split(',') if p.strip()]
+        return v
 
 
 class ParticipantImageCreate(BaseModel):
