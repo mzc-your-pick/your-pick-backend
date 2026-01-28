@@ -1,5 +1,5 @@
-from pydantic import BaseModel
-from typing import Dict, Optional
+from pydantic import BaseModel, field_validator
+from typing import Dict, List, Optional
 
 
 class ChoiceResult(BaseModel):
@@ -18,8 +18,15 @@ class ResultData(BaseModel):
     vote_type: int
     actual_result: Optional[int] = None
     public_votes: VoteResults
-    participants: Optional[str] = None
+    participants: Optional[List[str]] = None
     match: Optional[bool] = None
+
+    @field_validator('participants', mode='before')
+    @classmethod
+    def split_participants(cls, v):
+        if isinstance(v, str):
+            return [p.strip() for p in v.split(',') if p.strip()]
+        return v
 
 
 class ResultResponse(BaseModel):
