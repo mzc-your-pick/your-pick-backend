@@ -39,7 +39,7 @@ class TopicResponse(BaseModel):
     topic_title: str
     episode: Optional[int] = None
     match_type: Optional[str] = None
-    participants: Optional[str] = None
+    participants: Optional[List[str]] = None
     video_url: Optional[str] = None
     vote_type: int
     actual_result: Optional[int] = None
@@ -48,6 +48,16 @@ class TopicResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+    @classmethod
+    def model_validate(cls, obj, **kwargs):
+        if hasattr(obj, 'participants') and isinstance(obj.participants, str):
+            obj_dict = {c.name: getattr(obj, c.name) for c in obj.__table__.columns}
+            obj_dict['participants'] = [p.strip() for p in obj.participants.split(',') if p.strip()]
+            if hasattr(obj, 'participant_images'):
+                obj_dict['participant_images'] = obj.participant_images
+            return super().model_validate(obj_dict, **kwargs)
+        return super().model_validate(obj, **kwargs)
 
 
 class ParticipantImageCreate(BaseModel):

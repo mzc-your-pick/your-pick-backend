@@ -19,6 +19,12 @@ async def get_topics(
     return service.get_all(program_id=program_id, episode=episode)
 
 
+@router.get("/topics/programs/{program_id}", response_model=List[TopicResponse], summary="프로그램별 주제 목록 조회")
+async def get_topics_by_program(program_id: int, db: Session = Depends(get_db)):
+    service = TopicService(db)
+    return service.get_all(program_id=program_id)
+
+
 @router.get("/topics/{topic_id}", response_model=TopicResponse, summary="대결 주제 상세 조회")
 async def get_topic(topic_id: int, db: Session = Depends(get_db)):
     service = TopicService(db)
