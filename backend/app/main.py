@@ -65,7 +65,7 @@ async def global_exception_handler(request: Request, exc: Exception):
 
 
 # 라우터 등록
-app.include_router(api_router, prefix="/api/v1")
+app.include_router(api_router, prefix="/v1")
 
 
 # 헬스체크
