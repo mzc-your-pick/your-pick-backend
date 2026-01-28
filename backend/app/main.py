@@ -15,7 +15,9 @@ app = FastAPI(
     description="서바이벌 프로그램 대중 투표 API (백엔드 B)",
     version="1.0.0",
     docs_url="/docs",
-    redoc_url="/redoc"
+    redoc_url="/redoc",
+    openapi_url="/openapi.json",
+    root_path="/api"
 )
 
 
