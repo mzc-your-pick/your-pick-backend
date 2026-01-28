@@ -28,6 +28,17 @@ class CommentService:
         self.db.refresh(comment)
         return comment
 
+    def update(self, comment_id: int, content: str, password: str) -> Optional[str]:
+        comment = self.db.query(Comment).filter(Comment.id == comment_id).first()
+        if not comment:
+            return "COMMENT_NOT_FOUND"
+        if comment.comment_password != password:
+            return "WRONG_PASSWORD"
+        comment.content = content
+        self.db.commit()
+        self.db.refresh(comment)
+        return comment
+
     def delete(self, comment_id: int, password: str) -> Optional[str]:
         comment = self.db.query(Comment).filter(Comment.id == comment_id).first()
         if not comment:

@@ -9,6 +9,11 @@ class CommentCreate(BaseModel):
     comment_password: str = Field(..., max_length=255)
 
 
+class CommentUpdate(BaseModel):
+    content: str = Field(..., min_length=1)
+    comment_password: str
+
+
 class CommentDelete(BaseModel):
     comment_password: str
 

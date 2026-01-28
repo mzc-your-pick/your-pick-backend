@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from ..database import get_db
-from ..schemas.comment import CommentCreate, CommentDelete, CommentResponse, CommentListResponse
+from ..schemas.comment import CommentCreate, CommentUpdate, CommentDelete, CommentResponse, CommentListResponse
 from ..services.comment_service import CommentService
 
 router = APIRouter()
@@ -24,6 +24,17 @@ async def create_comment(vote_id: int, data: CommentCreate, db: Session = Depend
     service = CommentService(db)
     comment = service.create(vote_id, data)
     return comment
+
+
+@router.patch("/comments/{comment_id}", response_model=CommentResponse, summary="댓글 수정")
+async def update_comment(comment_id: int, data: CommentUpdate, db: Session = Depends(get_db)):
+    service = CommentService(db)
+    result = service.update(comment_id, data.content, data.comment_password)
+    if result == "COMMENT_NOT_FOUND":
+        raise HTTPException(status_code=404, detail="댓글을 찾을 수 없습니다")
+    if result == "WRONG_PASSWORD":
+        raise HTTPException(status_code=403, detail="비밀번호가 일치하지 않습니다")
+    return result
 
 
 @router.delete("/comments/{comment_id}", summary="댓글 삭제")
